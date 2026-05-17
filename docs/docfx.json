@@ -3,19 +3,15 @@
     {
       "src": [
         {
-          "files": [ "src/Api/Api.csproj" ],
+          "files": [ "src/Api/bin/Release/net9.0/Api.dll" ],
           "src": "../"
         }
       ],
       "dest": "api",
       "includePrivateMembers": false,
-      "disableGitFeatures": false,
-      "disableDefaultFilter": false,
-      "noRestore": false,
       "namespaceLayout": "flattened",
       "memberLayout": "separatePages",
-      "EnumSortOrder": "declaringOrder",
-      "allowCompilationErrors": false
+      "EnumSortOrder": "declaringOrder"
     }
   ],
   "build": {
