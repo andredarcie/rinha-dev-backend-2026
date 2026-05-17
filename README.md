@@ -114,8 +114,14 @@ The API will be available at `http://localhost:9999`.
 
 ## Running Tests
 
+**Unit tests** (89 tests — fast, no I/O):
 ```bash
 dotnet test src/Api.Tests/Api.Tests.csproj
+```
+
+**Integration tests** (9 tests — spins up the real `WebApplication` against synthetic data):
+```bash
+dotnet test src/Api.IntegrationTests/Api.IntegrationTests.csproj
 ```
 
 To generate an HTML coverage report (requires [ReportGenerator](https://github.com/danielpalme/ReportGenerator)):
@@ -126,26 +132,70 @@ To generate an HTML coverage report (requires [ReportGenerator](https://github.c
 
 Reports are written to `coverage-report/` and `coverage-results/`.
 
+## Running Benchmarks
+
+Benchmarks use [BenchmarkDotNet](https://benchmarkdotnet.org/) and must run in Release mode:
+
+```bash
+# all benchmarks
+dotnet run -c Release --project src/Api.Benchmarks
+
+# specific benchmark class
+dotnet run -c Release --project src/Api.Benchmarks -- --filter "*Knn*"
+```
+
+| Benchmark | What it measures |
+|---|---|
+| `VectorNormalizerBenchmarks` | Cost of normalizing one request into a 14D float vector |
+| `KnnSearchBenchmarks` | KNN search latency at 10K / 100K / 1M / 3M vectors |
+| `ScoringPipelineBenchmarks` | Full per-request pipeline at 3M vectors (production scenario) |
+
+After the run, HTML reports are generated in `BenchmarkDotNet.Artifacts/results/`. To view them in a browser:
+
+```powershell
+# Windows
+start BenchmarkDotNet.Artifacts/results/Api.Benchmarks.KnnSearchBenchmarks-report.html
+```
+
+Or serve all reports locally:
+```bash
+npx serve BenchmarkDotNet.Artifacts/results
+```
+
 ## Project Structure
 
 ```
 ├── src/
 │   ├── Api/
-│   │   ├── Program.cs                # Entry point & startup
-│   │   ├── Models.cs                 # Request/response DTOs
-│   │   ├── FraudDetectionService.cs  # Scoring orchestration
-│   │   ├── VectorNormalizer.cs       # Feature engineering (14D)
-│   │   └── ReferenceDataStore.cs    # KNN search engine
-│   └── Api.Tests/                    # XUnit test suite
+│   │   ├── Program.cs                    # Entry point & startup
+│   │   ├── Program.Partial.cs            # Exposes Program to WebApplicationFactory
+│   │   ├── Models.cs                     # Request/response DTOs
+│   │   ├── FraudDetectionService.cs      # Scoring orchestration
+│   │   ├── VectorNormalizer.cs           # Feature engineering (14D)
+│   │   └── ReferenceDataStore.cs         # KNN search engine
+│   ├── Api.Tests/                        # 89 unit tests (xUnit)
+│   ├── Api.IntegrationTests/             # 9 integration tests (WebApplicationFactory)
+│   └── Api.Benchmarks/                   # BenchmarkDotNet — normalizer, KNN, pipeline
+├── docs/
+│   ├── docfx.json                        # DocFX configuration
+│   ├── Api.Docs.csproj                   # Docs-only project (no Razor SDK)
+│   └── docs/                             # Architecture, API reference, performance guides
 ├── resources/
-│   ├── references.json.gz            # ~3M reference transactions
-│   ├── mcc_risk.json                 # MCC → fraud risk mapping
-│   └── normalization.json            # Feature normalization bounds
-├── Dockerfile                        # Multi-stage build
-├── docker-compose.yml                # nginx + 2x api
-└── nginx.conf                        # Load balancer config
+│   ├── references.json.gz                # ~3M reference transactions
+│   ├── mcc_risk.json                     # MCC → fraud risk mapping
+│   └── normalization.json                # Feature normalization bounds
+├── Dockerfile                            # Multi-stage build
+├── docker-compose.yml                    # nginx + 2x api
+└── nginx.conf                            # Load balancer config
 ```
 
 ## CI
 
-GitHub Actions runs the full test suite with Cobertura coverage on every push and pull request to `main`. Coverage is uploaded to Codecov.
+Two jobs run in parallel on every push and pull request to `main`:
+
+| Job | What it runs |
+|---|---|
+| **Unit Tests** | `Api.Tests` — 89 unit tests with Cobertura coverage uploaded to Codecov |
+| **Integration Tests** | `Api.IntegrationTests` — 9 tests against a real `WebApplication` with synthetic reference data |
+
+A third job builds and deploys the [DocFX documentation](docs/) to GitHub Pages on every push to `main`.

@@ -10,3 +10,4 @@ docs/_site/
 docs/api/
 docs/bin/
 docs/obj/
+BenchmarkDotNet.Artifacts/

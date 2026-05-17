@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  unit:
     name: Unit Tests
     runs-on: ubuntu-latest
 
@@ -19,7 +19,7 @@ jobs:
         with:
           dotnet-version: "9.0.x"
 
-      - name: Restore dependencies
+      - name: Restore
         run: dotnet restore src/Api.Tests/Api.Tests.csproj
 
       - name: Build
@@ -40,3 +40,28 @@ jobs:
         with:
           files: coverage/**/coverage.cobertura.xml
           fail_ci_if_error: false
+
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Restore
+        run: dotnet restore src/Api.IntegrationTests/Api.IntegrationTests.csproj
+
+      - name: Build
+        run: dotnet build src/Api.IntegrationTests/Api.IntegrationTests.csproj --no-restore -c Release
+
+      - name: Run integration tests
+        run: |
+          dotnet test src/Api.IntegrationTests/Api.IntegrationTests.csproj \
+            --no-build \
+            -c Release \
+            --logger "console;verbosity=normal"

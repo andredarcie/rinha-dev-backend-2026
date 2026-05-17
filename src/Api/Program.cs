@@ -30,7 +30,7 @@ await Task.WhenAll(mccRiskTask, storeTask);
 
 Console.WriteLine($"Data loaded in {sw2.Elapsed.TotalSeconds:F1}s");
 
-builder.Services.AddSingleton(storeTask.Result);
+builder.Services.AddSingleton<IReferenceDataStore>(storeTask.Result);
 builder.Services.AddSingleton<IReadOnlyDictionary<string, float>>(mccRiskTask.Result);
 builder.Services.AddSingleton<FraudDetectionService>();
 

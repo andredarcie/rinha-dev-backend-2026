@@ -18,6 +18,8 @@ public sealed class FraudDetectionService
     [ThreadStatic]
     private static float[]? _queryBuffer;
 
+    /// <param name="store">KNN reference store used for neighbor lookup.</param>
+    /// <param name="mccRisk">MCC → risk coefficient lookup injected from configuration.</param>
     public FraudDetectionService(IReferenceDataStore store, IReadOnlyDictionary<string, float> mccRisk)
     {
         _store = store;
