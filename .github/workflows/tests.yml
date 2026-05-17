@@ -1,0 +1,42 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore src/Api.Tests/Api.Tests.csproj
+
+      - name: Build
+        run: dotnet build src/Api.Tests/Api.Tests.csproj --no-restore -c Release
+
+      - name: Run tests with coverage
+        run: |
+          dotnet test src/Api.Tests/Api.Tests.csproj \
+            --no-build \
+            -c Release \
+            --logger "github;verbosity=normal" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory coverage \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage/**/coverage.cobertura.xml
+          fail_ci_if_error: false

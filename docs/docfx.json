@@ -1,0 +1,51 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [ "src/Api/Api.csproj" ],
+          "src": "../"
+        }
+      ],
+      "dest": "api",
+      "includePrivateMembers": false,
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false,
+      "noRestore": false,
+      "namespaceLayout": "flattened",
+      "memberLayout": "separatePages",
+      "EnumSortOrder": "declaringOrder",
+      "allowCompilationErrors": false
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [ "api/**.yml", "api/index.md" ]
+      },
+      {
+        "files": [ "docs/**.md", "docs/**/toc.yml", "toc.yml", "*.md" ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [ "images/**" ]
+      }
+    ],
+    "output": "_site",
+    "globalMetadataFiles": [],
+    "fileMetadataFiles": [],
+    "template": [ "default", "modern" ],
+    "globalMetadata": {
+      "_appName": "Rinha Backend 2026",
+      "_appTitle": "Rinha Backend 2026 — Fraud Detection API",
+      "_appFooter": "Rinha Backend 2026",
+      "_enableSearch": true,
+      "_appLogoPath": ""
+    },
+    "postProcessors": [],
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}

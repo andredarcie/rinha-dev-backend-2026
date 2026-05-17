@@ -1,0 +1,62 @@
+name: rinha-backend-2026
+
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "9999:9999"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      api1:
+        condition: service_healthy
+      api2:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: "20MB"
+    restart: unless-stopped
+
+  api1:
+    image: rinha-backend-2026:latest
+    build: .
+    environment:
+      - DATA_PATH=/app/data
+      - PORT=8080
+      - DOTNET_GCConserveMemory=9
+      - DOTNET_GCHeapHardLimitPercent=75
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.45"
+          memory: "165MB"
+    restart: unless-stopped
+
+  api2:
+    image: rinha-backend-2026:latest
+    build: .
+    environment:
+      - DATA_PATH=/app/data
+      - PORT=8080
+      - DOTNET_GCConserveMemory=9
+      - DOTNET_GCHeapHardLimitPercent=75
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.45"
+          memory: "165MB"
+    restart: unless-stopped

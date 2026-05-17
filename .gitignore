@@ -1,0 +1,11 @@
+bin/
+obj/
+*.user
+.vs/
+*.bin
+*.log
+coverage-report/
+coverage-results/
+docs/_site/
+docs/api/*.yml
+docs/api/*.json
