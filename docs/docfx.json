@@ -3,7 +3,7 @@
     {
       "src": [
         {
-          "files": [ "src/Api/bin/Release/net9.0/Api.dll" ],
+          "files": [ "docs/Api.Docs.csproj" ],
           "src": "../"
         }
       ],

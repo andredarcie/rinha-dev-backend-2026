@@ -30,9 +30,6 @@ jobs:
       - name: Install DocFX
         run: dotnet tool install -g docfx
 
-      - name: Build project (generate XML docs)
-        run: dotnet build src/Api/Api.csproj -c Release
-
       - name: Build documentation
         run: docfx docs/docfx.json --warningsAsErrors
 

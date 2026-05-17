@@ -7,5 +7,6 @@ obj/
 coverage-report/
 coverage-results/
 docs/_site/
-docs/api/*.yml
-docs/api/*.json
+docs/api/
+docs/bin/
+docs/obj/
